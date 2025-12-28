@@ -1,4 +1,4 @@
-# Cafe Sales Analysis & Automated Cleaning Tool
+# Sales Analysis & Automated Cleaning Tool
 
 ## Project Status: Alpha Version
 **Note:** This project is currently in active development. 
@@ -10,7 +10,7 @@
 An end-to-end Data Science project that transforms "dirty" retail data into actionable insights through automated cleaning, exploratory data analysis (EDA), and interactive visualization.
 
 ## Live Dashboard
-https://cafe-sales-analysis-4h9jte7gb3hejxgtxjapvv.streamlit.app/
+https:// -sales-analysis-4h9jte7gb3hejxgtxjapvv.streamlit.app/
 
 ## Project Overview
 This project addresses common data quality issues found in retail datasets (missing values, inconsistent formatting, and manual entry errors). I built a robust pipeline that:
@@ -26,7 +26,7 @@ This project addresses common data quality issues found in retail datasets (miss
 * **Version Control:** Git & GitHub
 
 ## Key Features
-* **Dynamic Data Upload:** Users can upload any CSV following the cafe sales schema.
+* **Dynamic Data Upload:** Users can upload any CSV following the   sales schema.
 * **Automated Imputation:** Handles 'ERROR', 'UNKNOWN', and missing price/quantity values using median and mode strategies.
 * **Interactive Visuals:** * Correlation Heatmaps to find relationships between variables.
     * Date filters to drill down into specific months or weekdays.
@@ -38,5 +38,5 @@ This project addresses common data quality issues found in retail datasets (miss
 ├── app.py                     # Streamlit web application code
 ├── PythonProject.ipynb         # Jupyter Notebook with full analysis & ML
 ├── requirements.txt            # List of dependencies for deployment
-├── dirty_cafe_sales.csv        # Raw dataset for testing
+├── dirty_ _sales.csv        # Raw dataset for testing
 └── README.md                   # Project documentation
