@@ -1,15 +1,6 @@
-<<<<<<< HEAD
 pandas
 numpy
 matplotlib
 seaborn
 scikit-learn
 streamlit
-=======
-pandas
-numpy
-matplotlib
-seaborn
-scikit-learn
-streamlit
->>>>>>> 3579651 (Initial commit: Professional Cafe Sales Dashboard with Modular Utils and ML)
