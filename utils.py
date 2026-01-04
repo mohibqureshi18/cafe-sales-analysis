@@ -1,52 +1,53 @@
+# utils.py
 import pandas as pd
-import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 
-def clean_cafe_data(df):
-    """Professional cleaning: Recovers columns and repairs 'ERROR' values."""
-    df_cleaned = df.copy()
+def clean_cafe_data(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Cleans cafe sales data:
+    - Normalizes column names
+    - Fills missing Total Spent where possible
+    - Handles missing columns safely
+    """
+    # Normalize columns: strip, lowercase, replace spaces with underscores
+    df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
 
-    # Step 1: Force find headers if CSV is messy
-    if 'Location' not in df_cleaned.columns:
-        for i, row in df_cleaned.iterrows():
-            if 'Location' in [str(x) for x in row.values]:
-                df_cleaned.columns = row.values
-                df_cleaned = df_cleaned.iloc[i+1:].reset_index(drop=True)
-                break
-    
-    # Step 2: Replace all variations of bad data
-    bad_list = ['ERROR', 'UNKNOWN', 'nan', '<<<<<<< HEAD', '=======', '>>>>>>>']
-    df_cleaned.replace(bad_list, np.nan, inplace=True)
-    
-    # Step 3: Fix Numeric Columns & Recalculate 'Total Spent' errors
-    cols = ['Quantity', 'Price Per Unit', 'Total Spent']
-    for c in cols:
-        if c in df_cleaned.columns:
-            df_cleaned[c] = pd.to_numeric(df_cleaned[c], errors='coerce')
-            
-    # Logic Repair: If Total Spent is missing, calculate it
-    mask = df_cleaned['Total Spent'].isna() & df_cleaned['Quantity'].notna() & df_cleaned['Price Per Unit'].notna()
-    df_cleaned.loc[mask, 'Total Spent'] = df_cleaned['Quantity'] * df_cleaned['Price Per Unit']
+    # Ensure necessary columns exist
+    for col in ['quantity', 'price_per_unit', 'total_spent']:
+        if col not in df.columns:
+            if col == 'total_spent':
+                df['total_spent'] = pd.NA
+            else:
+                df[col] = 0  # default 0 if missing
 
-    # Step 4: Fix Dates
-    if 'Transaction Date' in df_cleaned.columns:
-        df_cleaned['Transaction Date'] = pd.to_datetime(df_cleaned['Transaction Date'], errors='coerce')
-    
-    # Step 5: Categorical fill
-    for c in ['Item', 'Location', 'Payment Method']:
-        if c in df_cleaned.columns:
-            df_cleaned[c] = df_cleaned[c].fillna("Uncategorized")
-            
-    return df_cleaned
+    # Fill missing total_spent where quantity and price_per_unit exist
+    mask = df['total_spent'].isna() & df['quantity'].notna() & df['price_per_unit'].notna()
+    df.loc[mask, 'total_spent'] = df.loc[mask, 'quantity'] * df.loc[mask, 'price_per_unit']
 
-def run_ml_prediction(df):
-    """Utility based on your PythonProject.ipynb logic."""
-    try:
-        train_data = df.dropna(subset=['Total Spent', 'Quantity', 'Price Per Unit'])
-        X = train_data[['Quantity', 'Price Per Unit']]
-        y = train_data['Total Spent']
-        model = RandomForestRegressor(n_estimators=100, random_state=42)
-        model.fit(X, y)
-        return model
-    except:
+    # Optional: fill missing values with 0 for numeric columns
+    numeric_cols = ['quantity', 'price_per_unit', 'total_spent']
+    for col in numeric_cols:
+        df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
+
+    return df
+
+
+def run_ml_prediction(df: pd.DataFrame):
+    """
+    Trains a simple RandomForest model to predict total transaction value
+    based on quantity and price_per_unit
+    """
+    # Check if required columns exist
+    if not all(col in df.columns for col in ['quantity', 'price_per_unit', 'total_spent']):
         return None
+
+    X = df[['quantity', 'price_per_unit']]
+    y = df['total_spent']
+
+    # Train model only if we have data
+    if len(X) < 5:
+        return None
+
+    model = RandomForestRegressor(n_estimators=50, random_state=42)
+    model.fit(X, y)
+    return model
