@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+
 from utils import clean_cafe_data, get_performance_metrics
 
 st.set_page_config(page_title="Cafe Pro Analytics", layout="wide", page_icon="☕")
